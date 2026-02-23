@@ -1,4 +1,9 @@
-# Story_Lab
+## Story_Lab
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Gradio](https://img.shields.io/badge/Framework-Gradio-orange)
+![LLM](https://img.shields.io/badge/LLM-Ollama-green)
+![Model](https://img.shields.io/badge/Model-DreamShaper--7-purple)
+![CPU Only](https://img.shields.io/badge/Execution-CPU--Only-red)
 
 Story_Lab is a CPU-based AI story generation system that transforms structured prompts into multi-scene narrative outputs.
 
