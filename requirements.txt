@@ -5,3 +5,6 @@ accelerate
 safetensors
 pillow
 gradio
+numpy
+google-generativeai
+python-dotenv
