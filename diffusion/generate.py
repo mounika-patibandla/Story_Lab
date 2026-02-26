@@ -19,10 +19,10 @@ def generate_story_images(
     output_dir = os.path.join("results", f"story_{timestamp}")
     os.makedirs(output_dir, exist_ok=True)
 
-    # 🔥 Single generator
+    #  Single generator
     generator = torch.manual_seed(seed)
 
-    # 🔥 BATCH generation (one pipe call only)
+    #  BATCH generation (one pipe call only)
     results = pipe(
         prompts,
         negative_prompt=[negative_prompt] * len(prompts),
