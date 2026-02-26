@@ -3,21 +3,20 @@ import os
 import math
 from PIL import Image, ImageDraw, ImageFont
 import torch
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 import gradio as gr
 from main import run_pipeline
-import ollama
-
-
+import google.generativeai as genai
+import os
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("models/gemini-flash-latest")
 NEGATIVE_PROMPT = (
     "extra people, distorted faces, asymmetrical eyes, different eye color, "
     "low quality, blurry"
 )
 
 # -------------------------------------------------
-# 🔥 STRONG CONSISTENCY ENHANCER
+# STRONG CONSISTENCY ENHANCER
 # -------------------------------------------------
 def enhance_for_consistency(id_prompt, short_prompts):
 
@@ -139,7 +138,7 @@ def create_grid(image_paths):
 
 
 # -------------------------------------------------
-# 🚀 MAIN GENERATION
+#  MAIN GENERATION
 # -------------------------------------------------
 def run_generation(id_prompt, frame_text, num_frames,
                    height, width, seed):
@@ -197,31 +196,18 @@ No extra text.
 Follow numbering strictly.
 """
 
-    response = ollama.chat(
-        model="mistral",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input}
-        ]
-    )
+    full_prompt = system_prompt + "\nUser: " + user_input
 
-    reply = response["message"]["content"]
+    response = model.generate_content(full_prompt)
+    reply = response.text
 
-    # ✅ NEW MESSAGE FORMAT
-    chat_history.append({
-        "role": "user",
-        "content": user_input
-    })
-
-    chat_history.append({
-        "role": "assistant",
-        "content": reply
-    })
+    # Gradio expects list of [user, assistant]
+    chat_history.append([user_input, reply])
 
     return "", chat_history
 
 # -------------------------------------------------
-# 📥 Extract Identity + Frames From Chat
+#  Extract Identity + Frames From Chat
 # -------------------------------------------------
 def extract_story_elements(chat_history):
 
@@ -244,7 +230,7 @@ def extract_story_elements(chat_history):
     return identity, "\n".join(frames)
 
 # -------------------------------------------------
-# 🎨 UI
+#  UI
 # -------------------------------------------------
 with gr.Blocks(
     theme=gr.themes.Soft(),
@@ -384,7 +370,7 @@ with gr.Blocks(
 
 if __name__ == "__main__":
     demo.launch(
-        server_name="127.0.0.1",
+        server_name="0.0.0.0",
         server_port=7860,
-        share=False,
+        share=True,
 )
